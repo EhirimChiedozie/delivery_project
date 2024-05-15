@@ -1,5 +1,7 @@
 {% extends 'delivery/base.html' %}
 {% load static from static %}
 {% block content %}
-    <h3>Welcome {{ user.email }}</h3>
+    <div class="jumbotron">
+        Welcome {{ user.first_name }} {{ user.last_name }}
+    </div>
 {% endblock content %}

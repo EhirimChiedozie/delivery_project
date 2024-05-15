@@ -28,5 +28,9 @@ urlpatterns = [
     path('profile/', customer_views.profile, name='profile'),
     path('confirm_logout/', customer_views.confirm_logout, name='confirm_logout'),
     path('account_activation_sent/', customer_views.account_activation_sent, name='account_activation_sent' ),
-    path('account_activation_successful/', customer_views.account_activation_successful, name='account_activation_successful')
+    path('account_activation_successful/', customer_views.account_activation_successful, name='account_activation_successful'),
+    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='customers/password_reset.html'), name='password_reset'),
+    path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='customers/password_reset_done.html'), name='password_reset_done'),
+    path('password_reset_confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='customers/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('password_reset_complete', auth_views.PasswordResetCompleteView.as_view(template_name='customers/password_reset_complete.html'), name='password_reset_complete.html'),
 ]
