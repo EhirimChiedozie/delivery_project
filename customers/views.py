@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from .models import Customer
+from django.shortcuts import render, get_object_or_404
+from .models import Customer, DeliveryOrder, OrderTracking
 from django.shortcuts import render, redirect
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -9,6 +9,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from .forms import AccountOpeningForm
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 
 
 def account_activation_sent(request):
@@ -61,3 +64,42 @@ def profile(request):
 @login_required
 def confirm_logout(request):
     return render(request, 'customers/confirm_logout.html')
+
+# def order_list(request):
+#     orders = DeliveryOrder.objects.all()
+#     return render(request, 'customers/order_list.html', {'orders': orders})
+
+class OrderListView(ListView, LoginRequiredMixin):
+    models = DeliveryOrder
+    context_object_name = 'orders'
+    template_name = 'customers/order_list.html'
+
+    def get_queryset(self):
+        return DeliveryOrder.objects.all()
+  
+
+def order_detail(request, order_id):
+    order = get_object_or_404(DeliveryOrder, id=order_id)
+    tracking_info = OrderTracking.objects.filter(order=order)
+    return render(request, 'customers/order_detail.html', {'order': order, 'tracking_info': tracking_info})
+
+def track_order(request, tracking_number):
+    order = get_object_or_404(DeliveryOrder, tracking_number=tracking_number)
+    tracking_info = OrderTracking.objects.filter(order=order)
+    tracking_data = [{'status': t.status, 'location': t.location, 'timestamp': t.timestamp} for t in tracking_info]
+    return JsonResponse({'order': order.id, 'tracking_number': order.tracking_number, 'status': order.status, 'tracking_info': tracking_data})
+
+
+# class OrderListView(ListView, LoginRequiredMixin):
+#     models = DeliveryOrder
+#     context_object_name = 'orders'
+#     template_name = 'customers/order_list.html'
+
+#     def get_queryset(self):
+#         return DeliveryOrder.objects.filter(customer=self.request.user)
+    
+# def track_order(request, tracking_number):
+#     order = get_object_or_404(DeliveryOrder, tracking_number=tracking_number)
+#     tracking_info = OrderTracking.objects.filter(order=order)
+#     tracking_data = [{'status': t.status, 'location': t.location, 'timestamp': t.timestamp} for t in tracking_info]
+#     return JsonResponse({'order': order.id, 'tracking_number': order.tracking_number, 'status': order.status, 'tracking_info': tracking_data})

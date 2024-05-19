@@ -55,3 +55,30 @@ class Customer(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = 'Customer'
         verbose_name_plural = 'Customers'
+
+
+class DeliveryOrder(models.Model):
+    ORDER_STATUS_CHOICES = [
+        ('pendig', 'pending'),
+        ('shipped', 'shipped'),
+        ('delivered', 'delivered')
+    ]
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    deliver_to = models.CharField(max_length=200)
+    item = models.CharField(max_length=200)
+    order_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=ORDER_STATUS_CHOICES, default='pending')
+    tracking_number = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return f'Order {self.id} - {self.status}'
+
+
+class OrderTracking(models.Model):
+    order = models.ForeignKey(DeliveryOrder, on_delete=models.CASCADE)
+    status = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Tracking {self.id} for Order {self.order.id}'

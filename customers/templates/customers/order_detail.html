@@ -1,0 +1,12 @@
+{% extends 'delivery/base.html' %}
+{% block content %}
+    <h1>Order {{ order.id }}</h1>
+    <p>Status: {{ order.status }}</p>
+    <p>Tracking Number: {{ order.tracking_number }}</p>
+    <h2>Tracking Information</h2>
+    <ul>
+    {% for tracking in tracking_info %}
+        <li>{{ tracking.timestamp }} - {{ tracking.status }} at {{ tracking.location }}</li>
+    {% endfor %}
+    </ul>
+{% endblock content %}
