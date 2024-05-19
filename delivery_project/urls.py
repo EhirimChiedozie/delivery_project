@@ -37,5 +37,10 @@ urlpatterns = [
     #path('orders/', customer_views.order_list, name='order_list'),
     path('orders/<int:order_id>/', customer_views.order_detail, name='order_detail'),
     path('track/<str:tracking_number>/', customer_views.track_order, name='track_order'),
+    path('orders/', customer_views.OrderListView.as_view(), name='customer_order_list'),
+    #path('orders/', customer_views.order_list, name='order_list'),
+    path('orders/<int:order_id>/', customer_views.order_detail, name='order_detail'),
+    path('track/<str:tracking_number>/', customer_views.track_order, name='track_order'),
+
 
 ]
